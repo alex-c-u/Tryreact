@@ -1,0 +1,30 @@
+[
+    {   
+        "id": 1,
+        "nombre": "Ana Lopez",
+        "email": "ana@mail.com",
+        "puesto": "CEO",
+        "foto": ""
+    },
+    {
+        "id": 2,
+        "nombre": "Juan Perez",
+        "email": "juan@mail.com",
+        "puesto": "CTO",
+        "foto": ""
+    },
+    {
+        "id":3 ,
+        "nombre": "Lucia Gomez",
+        "email": "lucia@mail.com",
+        "puesto": "UX Designer",
+        "foto": ""
+    },
+    {
+        "id": 4,
+        "nombre": "Carlos Ruiz",
+        "email": "carlos@mail.com",
+        "puesto": "Fronted Dev",
+        "foto": ""
+    } 
+]

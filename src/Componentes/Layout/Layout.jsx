@@ -1,15 +1,17 @@
 import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
-import TarjetaProducto from "../TarjetaProducto/TarjetaProducto";
+import { Outlet } from "react-router-dom";
+
 
 function Layout ({ children }) {
     return (
         <div>
             <Header />
-            <main>
+            <main className="container my-4">
                 {children}
+                <Outlet />
             </main>
-            <footer />
+            <Footer />
         </div>
     );
 }
@@ -17,3 +19,5 @@ const styles= {
 
 }
 export default Layout;
+
+//se puede sacar el children ya que se asociaria a cada pagina, depenede de como quiera hacerlo
