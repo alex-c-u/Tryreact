@@ -39,9 +39,4 @@ function Item({ nombre, precio, stock }) {
 
 
 export default Item;
-// agregar el contador
-    //cambiar el estilo del contador y la cantida de info
-// poner el style en un css
-// despues hacer el stock invisible para el usurario
-// asociar al json
 

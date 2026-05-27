@@ -4,7 +4,9 @@ import Directorio from '../../Equipo/Directorio';
 function Footer(){
     return(
         <footer>
-            <p>fin de la pagina</p>
+            <h5>Todo electro</h5>
+            <p>En todo electro somos los principales provedores de equipos electronicos para el uso diario</p>
+            <p>Tambien contamos con desarrolladores web</p>
             <Directorio/>
         </footer>
     )

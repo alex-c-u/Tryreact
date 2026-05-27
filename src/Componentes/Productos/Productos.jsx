@@ -1,48 +1,68 @@
 import React, { useState, useEffect } from 'react';
+import TarjetaProducto from '../TarjetaProducto/TarjetaProducto';
 
+function Productos({ Mensaje }) {
 
-function Productos({Mensaje}) {
     const [productos, setProductos] = useState([]);
     const [error, setError] = useState(null);
     const [cargando, setCargando] = useState(true);
+
     useEffect(() => {
+
         fetch('/data/productos.json')
+
             .then((respuesta) => {
+
                 if (!respuesta.ok) {
-                    throw new Error('No se pudo cargar la información de los productos');
+                    throw new Error('No se pudo cargar la información');
                 }
+
                 return respuesta.json();
             })
+
             .then((datos) => {
                 setProductos(datos);
             })
+
             .catch((error) => {
                 setError(error.message);
             })
+
             .finally(() => {
                 setCargando(false);
             });
+
     }, []);
+
     if (cargando) {
-        return <p>Cargando productos, por favor espere...</p>;
+        return <h2>Cargando productos...</h2>;
     }
+
     if (error) {
-        return <p>Error: {error}</p>;
+        return <h2>Error: {error}</h2>;
     }
 
     return (
-        <div>
+
+        <div className="container mt-4">
+
             <h1>{Mensaje}</h1>
-            <ul>
+
+            <div className="row">
+
                 {productos.map((producto) => (
-                    <li key={producto.id}>
-                        <h2>{producto.nombre}</h2>
-                        <img src={producto.imagen} alt={producto.nombre} width="150" />
-                        <p>Precio: ${producto.precio}</p>
-                    </li>
+
+                    <TarjetaProducto
+                        key={producto.id}
+                        {...producto}
+                    />
+
                 ))}
-            </ul>
+
+            </div>
+
         </div>
     );
 }
+
 export default Productos;

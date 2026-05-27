@@ -4,27 +4,27 @@
         "nombre": "Ana Lopez",
         "email": "ana@mail.com",
         "puesto": "CEO",
-        "foto": ""
+        "foto": "/images/mujer1.webp"
     },
     {
         "id": 2,
         "nombre": "Juan Perez",
         "email": "juan@mail.com",
         "puesto": "CTO",
-        "foto": ""
+        "foto": "/images/hombre1.jpg"
     },
     {
         "id":3 ,
         "nombre": "Lucia Gomez",
         "email": "lucia@mail.com",
         "puesto": "UX Designer",
-        "foto": ""
+        "foto": "/images/mujer2.jpg"
     },
     {
         "id": 4,
         "nombre": "Carlos Ruiz",
         "email": "carlos@mail.com",
         "puesto": "Fronted Dev",
-        "foto": ""
+        "foto": "/images/hombre2.jpg"
     } 
 ]
