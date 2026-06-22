@@ -1,28 +1,62 @@
 import { useState } from 'react';
+import { useCart } from '../../context/CartContext/CartContext';
 import styles from "./TarjetaProducto.module.css";
 
-function TarjetaProducto({ nombre, precio, imagen, stock }) {
+
+function TarjetaProducto({
+  id,
+  nombre,
+  precio,
+  stock,
+  imagen
+}) {
+
+  const producto = {
+    id,
+    nombre,
+    precio,
+    stock,
+    imagen
+  };
 
   const [favorito, setFavorito] = useState(false);
-
   const [cantidad, setCantidad] = useState(0);
+
+  const {
+    addToCart,
+    updateCartQuantity
+  } = useCart();
 
   const toggleFavorito = () => {
     setFavorito(!favorito);
   };
 
-  const agregarProducto = () => {
+  const agregarInicial = () => {
+
+    setCantidad(1);
+
+    addToCart(producto, 1);
+  };
+
+  const incrementar = () => {
 
     if (cantidad < stock) {
-      setCantidad(cantidad + 1);
+
+      const nuevaCantidad = cantidad + 1;
+
+      setCantidad(nuevaCantidad);
+
+      updateCartQuantity(id, nuevaCantidad);
     }
   };
 
-  const quitarProducto = () => {
+  const decrementar = () => {
 
-    if (cantidad > 0) {
-      setCantidad(cantidad - 1);
-    }
+    const nuevaCantidad = cantidad - 1;
+
+    setCantidad(nuevaCantidad);
+
+    updateCartQuantity(id, nuevaCantidad);
   };
 
   return (
@@ -39,7 +73,9 @@ function TarjetaProducto({ nombre, precio, imagen, stock }) {
 
         <div className="card-body">
 
-          <h5 className="card-title">{nombre}</h5>
+          <h5 className="card-title">
+            {nombre}
+          </h5>
 
           <p className="card-text">
             Precio: ${precio}
@@ -51,41 +87,41 @@ function TarjetaProducto({ nombre, precio, imagen, stock }) {
 
           <div className="d-flex justify-content-between align-items-center">
 
-            {
-              cantidad === 0 ? (
+            {cantidad === 0 ? (
+
+              <button
+                className="btn btn-primary"
+                onClick={agregarInicial}
+              >
+                Agregar al carrito
+              </button>
+
+            ) : (
+
+              <div className="d-flex align-items-center gap-2">
 
                 <button
-                  className="btn btn-primary"
-                  onClick={agregarProducto}
+                  className="btn btn-danger"
+                  onClick={decrementar}
                 >
-                  Comprar
+                  -
                 </button>
 
-              ) : (
+                <span className="fw-bold">
+                  {cantidad}
+                </span>
 
-                <div className="d-flex align-items-center gap-2">
+                <button
+                  className="btn btn-success"
+                  onClick={incrementar}
+                  disabled={cantidad >= stock}
+                >
+                  +
+                </button>
 
-                  <button
-                    className="btn btn-danger"
-                    onClick={quitarProducto}
-                  >
-                    -
-                  </button>
+              </div>
 
-                  <span>{cantidad}</span>
-
-                  <button
-                    className="btn btn-success"
-                    onClick={agregarProducto}
-                    disabled={cantidad >= stock}
-                  >
-                    +
-                  </button>
-
-                </div>
-
-              )
-            }
+            )}
 
             <span
               className={styles.estrella}
@@ -97,17 +133,19 @@ function TarjetaProducto({ nombre, precio, imagen, stock }) {
           </div>
 
         </div>
+
       </div>
+
     </div>
   );
 }
 
 export default TarjetaProducto;
-
 /*
 <TarjetaProducto 
           imagen="./src/assets/hero.png" 
           nombre="producto 1"
           precio={1000}
         />
+
 */
