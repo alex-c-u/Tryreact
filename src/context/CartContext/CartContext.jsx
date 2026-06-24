@@ -84,6 +84,12 @@ export const CartProvider = ({ children }) => {
         );
     };
 
+    // no se si es necesario pq es algo que ya hace
+    const getCantidadActual = (productId) => {
+        (item => item.id === productId);
+        return item ? item.cantidad : 0;
+    };
+    
     return (
         <CartContext.Provider
             value={{
