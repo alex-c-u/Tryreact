@@ -46,6 +46,8 @@ export const CartProvider = ({ children }) => {
         }
     };
 
+
+
     const updateCartQuantity = (productId, quantity) => {
 
         if (quantity <= 0) {
@@ -66,42 +68,57 @@ export const CartProvider = ({ children }) => {
         );
     };
 
-    const clearCart = () => {
-        setCart([]);
+    const removeItem = (prodrucId, quantity) => {
+        const updatedCart = cart.filter(item => item.id !== productId);
+        setCart(updatedCart)
     };
 
-    const getCartQuantity = () => {
-        return cart.reduce(
-            (acc, item) => acc + item.quantity,
-            0
+    const isInCart = (productId) => {
+        return cart.some(item => item.id === productId);
+    };
+
+        const clearCart = () => {
+            setCart([]);
+        };
+
+        const getCartQuantity = () => {
+            return cart.reduce(
+                (acc, item) => acc + item.quantity,
+                0
+            );
+        };
+
+        const getCartTotal = () => {
+            return cart.reduce(
+                (acc, item) => acc + item.precio * item.quantity,
+                0
+            );
+        };
+
+        // no se si es necesario pq es algo que ya hace
+        const getCantidadActual = (productId) => {
+            (item => item.id === productId);
+            return item ? item.cantidad : 0;
+        };
+
+        return (
+            <CartContext.Provider
+                value={{
+                    cart,
+                    addToCart,
+                    updateCartQuantity,
+                    clearCart,
+                    getCartQuantity,
+                    getCartTotal,
+                    removeItem,
+                    isInCart
+                }}
+            >
+                {children}
+            </CartContext.Provider>
         );
     };
 
-    const getCartTotal = () => {
-        return cart.reduce(
-            (acc, item) => acc + item.precio * item.quantity,
-            0
-        );
-    };
-
-    // no se si es necesario pq es algo que ya hace
-    const getCantidadActual = (productId) => {
-        (item => item.id === productId);
-        return item ? item.cantidad : 0;
-    };
-    
-    return (
-        <CartContext.Provider
-            value={{
-                cart,
-                addToCart,
-                updateCartQuantity,
-                clearCart,
-                getCartQuantity,
-                getCartTotal
-            }}
-        >
-            {children}
-        </CartContext.Provider>
-    );
-};
+    //asegurarme que ande el removeItem
+    //asegurarme que ande isInCart
+    //ver si me gustan asi o hacerlos de otra forma
