@@ -37,9 +37,29 @@ export function FormularioProducto({ datosForm, manejarCambio, manejarEnvio, man
                 <input 
                 type="number" 
                 placeholder="Ej: 5"
-                name="stock" // Atributo clave
-value={datosForm.stock}
-onChange={manejarCambio} 
+                name="stock" 
+                value={datosForm.stock}
+                onChange={manejarCambio} 
+                />
+            </div>
+            <div>
+                <label>Id:</label>
+                <input
+                    type="number"
+                    placeholder="Ej: 15"
+                    name="id" 
+                    value={datosForm.id}
+                    onChange={manejarCambio}
+                />
+            </div>
+                        <div>
+                <label>Detalle:</label>
+                <input
+                    type="text"
+                    placeholder="Detallar el producto..."
+                    name="detalle" 
+                    value={datosForm.detalle}
+                    onChange={manejarCambio}
                 />
             </div>
             <div>

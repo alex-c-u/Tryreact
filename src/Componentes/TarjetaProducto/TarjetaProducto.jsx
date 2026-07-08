@@ -1,151 +1,282 @@
 import { useState } from 'react';
 import { useCart } from '../../context/CartContext/CartContext';
+import { Link } from 'react-router-dom';
 import styles from "./TarjetaProducto.module.css";
 
-
-function TarjetaProducto({
-  id,
-  nombre,
-  precio,
-  stock,
-  imagen
+function TarjetaProducto({ id, nombre, precio, imagen, stock, variantes = []
 }) {
+    
+    const { addToCart, updateQuantity, removeFromCart } = useCart();
 
-  const producto = {
-    id,
-    nombre,
-    precio,
-    stock,
-    imagen
-  };
+    const [favorito, setFavorito] = useState(false);
 
-  const [favorito, setFavorito] = useState(false);
-  const [cantidad, setCantidad] = useState(0);
+    const [cantidad, setCantidad] = useState(0);
 
-  const {
-    addToCart,
-    updateCartQuantity
-  } = useCart();
 
-  const toggleFavorito = () => {
-    setFavorito(!favorito);
-  };
+    const [varianteSeleccionada, setVarianteSeleccionada] = useState(
+        variantes.length > 0 ? variantes[0] : null
+    );
 
-  const agregarInicial = () => {
+    const stockDisponible = varianteSeleccionada
+        ? varianteSeleccionada.stock
+        : stock;
 
-    setCantidad(1);
+    const precioActual = varianteSeleccionada?.precio || precio;
 
-    addToCart(producto, 1);
-  };
+    const imagenActual = varianteSeleccionada?.imagen || imagen;
 
-  const incrementar = () => {
+    const toggleFavorito = () => {
+        setFavorito(!favorito);
+    };
 
-    if (cantidad < stock) {
 
-      const nuevaCantidad = cantidad + 1;
+    const cartId = varianteSeleccionada
+        ? `${id}-${varianteSeleccionada.id}`
+        : id;
+const producto = {
+        cartId,
+        id,
+        nombre,
+        precio: precioActual,
+        imagen: imagenActual,
+        variante: varianteSeleccionada || null,
+        stock: stockDisponible
+    };
 
-      setCantidad(nuevaCantidad);
 
-      updateCartQuantity(id, nuevaCantidad);
-    }
-  };
+    const agregarProducto = () => {
+        if (cantidad >= stockDisponible) return;
 
-  const decrementar = () => {
+        const nuevaCantidad = cantidad + 1;
 
-    const nuevaCantidad = cantidad - 1;
+        setCantidad(nuevaCantidad);
 
-    setCantidad(nuevaCantidad);
+        if (cantidad === 0) {
 
-    updateCartQuantity(id, nuevaCantidad);
-  };
+            addToCart(producto, 1);
 
-  return (
+        } else {
 
-    <div className="col-md-4 mb-4">
+            updateQuantity(cartId, nuevaCantidad);
 
-      <div className={`card ${styles.card}`}>
+        }
 
-        <img
-          src={imagen}
-          className={`card-img-top ${styles.cardImg}`}
-          alt={nombre}
-        />
+    };
 
-        <div className="card-body">
+    const quitarProducto = () => {
 
-          <h5 className="card-title">
-            {nombre}
-          </h5>
+        if (cantidad === 0) return;
 
-          <p className="card-text">
-            Precio: ${precio}
-          </p>
+        const nuevaCantidad = cantidad - 1;
 
-          <p>
-            Stock disponible: {stock}
-          </p>
+        setCantidad(nuevaCantidad);
 
-          <div className="d-flex justify-content-between align-items-center">
+        if (nuevaCantidad === 0) {
 
-            {cantidad === 0 ? (
+            removeFromCart(cartId);
 
-              <button
-                className="btn btn-primary"
-                onClick={agregarInicial}
-              >
-                Agregar al carrito
-              </button>
+        } else {
 
-            ) : (
+            updateQuantity(cartId, nuevaCantidad);
 
-              <div className="d-flex align-items-center gap-2">
+        }
 
-                <button
-                  className="btn btn-danger"
-                  onClick={decrementar}
-                >
-                  -
-                </button>
+    };
 
-                <span className="fw-bold">
-                  {cantidad}
-                </span>
+    return (
 
-                <button
-                  className="btn btn-success"
-                  onClick={incrementar}
-                  disabled={cantidad >= stock}
-                >
-                  +
-                </button>
+        <div className="col-md-4 mb-4">
 
-              </div>
+            <div className={`card h-100 ${styles.card}`}>
 
-            )}
+                {/* Imagen */}
 
-            <span
-              className={styles.estrella}
-              onClick={toggleFavorito}
-            >
-              {favorito ? '⭐' : '☆'}
-            </span>
+                <img
+                    src={imagenActual}
+                    className={`card-img-top ${styles.cardImg}`}
+                    alt={nombre}
+                />
 
-          </div>
+                <div className="card-body">
+
+                    <h5>{nombre}</h5>
+
+                    <h6>  ${precioActual}  </h6>
+
+                    <Link to={`/productos/${id}`} > Ver detalle </Link>
+
+                    {/* Variantes */}
+
+                    {
+                        variantes.length > 0 && (
+
+                            <>
+
+                                <p className="mb-1">
+
+                                    <strong>Color</strong>
+
+                                </p>
+
+                                <div className="d-flex gap-2 mb-3">
+
+                                    {
+                                        variantes.map((variante) => (
+
+                                            <button
+
+                                                key={variante.id}
+
+                                                title={variante.nombre}
+
+                                                onClick={() => {
+
+                                                    setVarianteSeleccionada(variante);
+
+                                                    setCantidad(0);
+
+                                                }}
+
+                                                style={{
+                                                    width: "30px",
+                                                    height: "30px",
+                                                    borderRadius: "50%",
+                                                    border:
+
+                                                        varianteSeleccionada.id === variante.id
+
+                                                            ? "3px solid black"
+
+                                                            : "1px solid #ccc",
+
+                                                    backgroundColor: variante.color,
+
+                                                    cursor: "pointer"
+                                                }}
+
+                                            />
+
+                                        ))
+                                    }
+
+                                </div>
+
+                            </>
+
+                        )
+                    }
+
+                    <p>
+                        Stock:
+                        <strong> {stockDisponible} </strong>
+                    </p>
+
+
+
+                    {
+
+                        cantidad === 0 ? (
+
+                            <button
+
+                                className="btn btn-primary w-100"
+
+                                onClick={agregarProducto}
+
+                            >
+
+                                Agregar al carrito
+
+                            </button>
+
+                        ) : (
+
+                            <div className="d-flex justify-content-center align-items-center gap-3">
+
+                                <button
+
+                                    className="btn btn-danger"
+
+                                    onClick={quitarProducto}
+
+                                >
+
+                                    -
+
+                                </button>
+
+                                <span
+                                    style={{
+                                        fontWeight: "bold",
+                                        fontSize: "18px"
+                                    }}
+                                >
+
+                                    {cantidad}
+
+                                </span>
+
+                                <button
+
+                                    className="btn btn-success"
+
+                                    onClick={agregarProducto}
+
+                                    disabled={
+                                        cantidad >= stockDisponible
+                                    }
+
+                                >
+
+                                    +
+
+                                </button>
+
+                            </div>
+
+                        )
+
+                    }
+
+                    {/* Favorito */}
+
+                    <div className="text-end mt-3">
+
+                        <span
+
+                            className={styles.estrella}
+
+                            style={{
+                                cursor: "pointer",
+                                fontSize: "28px"
+                            }}
+
+                            onClick={toggleFavorito}
+
+                        >
+
+                            {
+
+                                favorito
+
+                                    ? "⭐"
+
+                                    : "☆"
+
+                            }
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
-      </div>
+    );
 
-    </div>
-  );
 }
 
 export default TarjetaProducto;
-/*
-<TarjetaProducto 
-          imagen="./src/assets/hero.png" 
-          nombre="producto 1"
-          precio={1000}
-        />
-
-*/

@@ -1,36 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase/config';
+
 import TarjetaProducto from '../TarjetaProducto/TarjetaProducto';
+
 
 function Productos({ Mensaje }) {
 
     const [productos, setProductos] = useState([]);
     const [error, setError] = useState(null);
     const [cargando, setCargando] = useState(true);
-
+    
     useEffect(() => {
 
-        fetch('/data/productos.json')
+        const obtenerProductos = async () => {
 
-            .then((respuesta) => {
+            try {
 
-                if (!respuesta.ok) {
-                    throw new Error('No se pudo cargar la información');
-                }
+                const productosRef = collection(db, "productos");
 
-                return respuesta.json();
-            })
+                const respuesta = await getDocs(productosRef);
 
-            .then((datos) => {
-                setProductos(datos);
-            })
+                const listaProductos = respuesta.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
 
-            .catch((error) => {
+                setProductos(listaProductos);
+
+            } catch (error) {
+
                 setError(error.message);
-            })
 
-            .finally(() => {
+            } finally {
+
                 setCargando(false);
-            });
+
+            }
+
+        };
+
+        obtenerProductos();
 
     }, []);
 
@@ -62,7 +72,9 @@ function Productos({ Mensaje }) {
             </div>
 
         </div>
+
     );
 }
 
 export default Productos;
+// <Link to={`/productos/${prod.id}`}>Ver detalle</Link>
