@@ -34,12 +34,12 @@ export function FormularioProducto({ datosForm, manejarCambio, manejarEnvio, man
             </div>
             <div>
                 <label>Stock:</label>
-                <input 
-                type="number" 
-                placeholder="Ej: 5"
-                name="stock" 
-                value={datosForm.stock}
-                onChange={manejarCambio} 
+                <input
+                    type="number"
+                    placeholder="Ej: 5"
+                    name="stock"
+                    value={datosForm.stock}
+                    onChange={manejarCambio}
                 />
             </div>
             <div>
@@ -47,27 +47,28 @@ export function FormularioProducto({ datosForm, manejarCambio, manejarEnvio, man
                 <input
                     type="number"
                     placeholder="Ej: 15"
-                    name="id" 
+                    name="id"
                     value={datosForm.id}
                     onChange={manejarCambio}
                 />
             </div>
-                        <div>
+            
+            <div>
                 <label>Detalle:</label>
                 <input
                     type="text"
                     placeholder="Detallar el producto..."
-                    name="detalle" 
+                    name="detalle"
                     value={datosForm.detalle}
                     onChange={manejarCambio}
                 />
             </div>
             <div>
                 <label>Imagen:</label>
-                <input 
-                type="file" 
-                placeholder="https://..." 
-                onChange={manejarCambioImagen}
+                <input
+                    type="file"
+                    placeholder="https://..."
+                    onChange={manejarCambioImagen}
                 />
             </div>
             <button type="submit">Guardar Producto</button>

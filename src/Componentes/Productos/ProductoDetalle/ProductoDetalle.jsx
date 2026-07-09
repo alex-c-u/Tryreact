@@ -4,67 +4,131 @@ import { doc, getDoc, query, collection, where, getDocs } from "firebase/firesto
 import { db } from "../../../firebase/config";
 import Productos from '../Productos';
 
-const ProductoDetalle = () => {
+function ProductoDetalle() {
+
     const { id } = useParams();
+
     const [producto, setProducto] = useState(null);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        // fetch('')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         const productoEncontrado = data.find(p.id ===)
-        //         setProducto(productoEncontrado);
-        //     })
-        //     .catch(error => console.error("Error al cargar el producto."))
-
 
         if (!id) return;
 
-        //para buscar con id de firestore:
-        // const docRef = doc(db, "productos", id);
+        const obtenerProducto = async () => {
 
-        //para buscar con id de producto:
-        const queryId = query(
-            collection(db, "productos"),
-            where("id", "==", Number(id))
-        );
+            try {
+                //  para ver pq no me traia el producto 
 
+                console.log("ID de la URL:", id);   
 
-        getDocs(queryId)
-            .then((resp) => {
-                if (resp.empty) {
-                    console.log("no se encontro el producto");
+                const queryId = query(
+                    collection(db, "productos"),
+                    where("id", "==", Number(id))
+                );
+
+                const respuesta = await getDocs(queryId);
+                //ver que encuentra el await
+                console.log("Cantidad de documentos:", respuesta.size);
+                if (respuesta.empty) {
+
+                    setError("Producto no encontrado");
                     return;
+
                 }
 
-                setProducto({
-                    ...resp.docs[0].data(),
-                    idFirestore: resp.docs[0].id
-                })
-                // i f (resp.exists()) { // Verificamos si el documento existe
-                //     setProducto({ ...resp.data(), id: resp.id });
-                // } else {
-                //     console.log("No se encontró el producto");
-                // }
+                const productoEncontrado = {
+                    ...respuesta.docs[0].data(),
+                    idFirestore: respuesta.docs[0].id
+                };
 
-            })
-            .catch((error) => {
-                console.error("error al cargar el producto:")
-            });
+                setProducto(productoEncontrado);
+
+            } catch (error) {
+
+                console.error(error);
+                setError("Error al cargar el producto");
+
+            } finally {
+
+                setCargando(false);
+
+            }
+
+        };
+
+        obtenerProducto();
+
     }, [id]);
-    if (!producto) {
-        return <h2>Cargargando detalle del producto...</h2>
+
+    if (cargando) {
+        return <h2>Cargando detalle del producto...</h2>;
     }
-    if (!producto.id) {
-        <h2> producto no encontrado</h2>
+
+    if (error) {
+        return <h2>{error}</h2>;
     }
 
     return (
-        <div>
-            <h2>Detalle del Producto</h2>
-            <Productos {...producto} />
+
+        <div className="container mt-4">
+
+            <h2>{producto.nombre}</h2>
+
+            <img
+                src={producto.imagen}
+                alt={producto.nombre}
+                style={{
+                    maxWidth: "300px",
+                    width: "100%"
+                }}
+            />
+
+            <h4 className="mt-3">
+                ${producto.precio}
+            </h4>
+
+            {
+                producto.stock && (
+                    <p>
+                        Stock: {producto.stock}
+                    </p>
+                )
+            }
+            {/* // hacer que aparesca la descripcion aca */}
+            {
+                producto.variantes?.length > 0 && (
+
+                    <div>
+
+                        <h5>Variantes</h5>
+
+                        {
+                            producto.variantes.map((variante) => (
+
+                                <div key={variante.id}>
+
+                                    {variante.nombre}
+
+                                    {" - "}
+
+                                    Stock: {variante.stock}
+
+                                </div>
+
+                            ))
+                        }
+
+                    </div>
+
+                )
+            }
+
         </div>
-    )
+
+    );
+
 }
 
 export default ProductoDetalle;

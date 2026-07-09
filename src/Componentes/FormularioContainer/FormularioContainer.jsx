@@ -10,7 +10,8 @@ export function FormularioContainer() {
         precio: '',
         stock: '',
         categoria: '',
-        detalle: ''
+        detalle: '',
+        destacado: ''
     });
     // 1. Nuevo estado para el archivo de imagen
     const [imagenFile, setImagenFile] = useState(null);
@@ -48,18 +49,24 @@ export function FormularioContainer() {
             if (datosImgbb.success) {
                 console.log("Imagen subida con éxito. URL:", datosImgbb.data.url);
                 // Unimos la URL de la imagen con el resto de los datos del formulario
-                
+
                 const productoCompleto = {
-                    ...datosForm,
+                    id: Number(datosForm.id),
+                    nombre: datosForm.nombre.trim(),
+                    categoria: datosForm.categoria.trim(),
+                    precio: Number(datosForm.precio),
+                    stock: Number(datosForm.stock),
+                    detalle: datosForm.detalle.trim(),
+                    destacado: Boolean(true),
                     // Agregamos la URL obtenida
-                    imagen: datosImgbb.data.url
+                    imagen: datosImgbb.data.url 
                 };
                 // Por el momento hacemos un console.log
                 console.log('Enviando producto a Firebase:', productoCompleto);
-                
-                const db= getFirestore();
-                const productosCollection = collection (db, "productos");
-                await addDoc (productosCollection, productoCompleto);
+
+                const db = getFirestore();
+                const productosCollection = collection(db, "productos");
+                await addDoc(productosCollection, productoCompleto);
             } else {
                 throw new Error('La subida de la imagen a Imgbb falló.');
             }
