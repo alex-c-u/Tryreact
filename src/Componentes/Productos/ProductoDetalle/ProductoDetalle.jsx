@@ -20,8 +20,7 @@ function ProductoDetalle() {
 
             try {
                 //  para ver pq no me traia el producto 
-
-                console.log("ID de la URL:", id);   
+                // console.log("ID de la URL:", id);   
 
                 const queryId = query(
                     collection(db, "productos"),
@@ -30,7 +29,7 @@ function ProductoDetalle() {
 
                 const respuesta = await getDocs(queryId);
                 //ver que encuentra el await
-                console.log("Cantidad de documentos:", respuesta.size);
+                // console.log("Cantidad de documentos:", respuesta.size);
                 if (respuesta.empty) {
 
                     setError("Producto no encontrado");
@@ -75,6 +74,9 @@ function ProductoDetalle() {
         <div className="container mt-4">
 
             <h2>{producto.nombre}</h2>
+<p className="text-muted">
+                        Categoría: {producto.categoria}
+                    </p>
 
             <img
                 src={producto.imagen}
@@ -96,7 +98,11 @@ function ProductoDetalle() {
                     </p>
                 )
             }
-            {/* // hacer que aparesca la descripcion aca */}
+            <p>
+                        <strong>Descripcion</strong>
+                    </p>
+
+                    <p>{producto.detalle}</p>
             {
                 producto.variantes?.length > 0 && (
 
