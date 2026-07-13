@@ -1,0 +1,15 @@
+*{box-sizing: border-box;
+margin: 0;
+padding: 0;}
+
+header{text-align: center;}
+
+ul{display: flex;
+gap: 15px;
+}
+
+nav{text-align: right;}
+
+li{
+    list-style: none;
+}

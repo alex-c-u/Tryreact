@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-
 import TarjetaProducto from '../TarjetaProducto/TarjetaProducto';
 
 
@@ -77,4 +76,3 @@ function Productos({ Mensaje }) {
 }
 
 export default Productos;
-// <Link to={`/productos/${prod.id}`}>Ver detalle</Link>

@@ -4,9 +4,9 @@ import Directorio from '../../Equipo/Directorio';
 function Footer(){
     return(
         <footer>
-            <h5>Todo electro</h5>
-            <p>En todo electro somos los principales provedores de equipos electronicos para el uso diario</p>
-            <p>Tambien contamos con desarrolladores web</p>
+            <h5>Unique Beauty</h5>
+            <p>En Unique Beauty somos los principales provedores de maquillaje o producttos que tiene en cuenta lo mejor para tu piel.</p>
+            <p>Tambien contamos con  ascesores que puede ayudarte</p>
             <Directorio/>
         </footer>
     )

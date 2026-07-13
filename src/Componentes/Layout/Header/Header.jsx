@@ -12,17 +12,31 @@ function Header() {
 
     return (
         <header className={styles.header}>
-            <h1>Todo electro</h1>
+            <h1>Unique Beauty </h1>
             <nav>
                 <ul>
                     <li><Link to="/">Inicio</Link></li>
                     <li><Link to="/productos">Productos</Link></li>
                     {/* <li><Link to="/destacados">Productos D</Link></li> */}
                     <li><Link to="/carrito">Carrito 🛒 {totalItems > 0 && <span>{totalItems}</span>}</Link></li>
-                    <li><Link to="/Gestion"> Gestion</Link></li>
-                    <li><Link to="/GestionCupones"> Gestion cupones</Link></li>
-                    <li><Link to="/Login">Login</Link></li>
-                    {/* <li><Link to="/Registro">Registrate</Link></li>   No se si llego a hacer una ruta bonita*/}
+
+
+                    {user ? (
+                        <>{user.rol === 'admin' && (
+                            <ul>
+                                <li className="nav-item"><Link className="nav-link" to="/Gestion">Gestión Productos</Link></li>
+                                <li className="nav-item"><Link className="nav-link" to="/GestionCupones"> Gestion cupones</Link></li>
+                            </ul>
+                        )
+                        }
+
+
+                            <span>¡Hola, {user.email}!</span>
+                            <button onClick={logout}>Cerrar Sesión</button>
+                        </>
+                    ) : (
+                        <li className="nav-item"><Link className="nav-link" to="/login">Login</Link></li>
+                    )}
                 </ul>
             </nav>
         </header>

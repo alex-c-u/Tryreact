@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import { useCart } from '../../context/CartContext/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
-
+import {
+    collection,
+    query,
+    where,
+    getDocs,
+    doc,
+    updateDoc
+} from "firebase/firestore";
+import { db } from "../../firebase/config";
+import styles from "../../Componentes/Carrito/Cart.module.css";
 
 function Cart() {
 
@@ -35,13 +44,64 @@ function Cart() {
 
     const finalizarCompra = async () => {
 
-        // Acá después vamos a descontar el stock de Firebase
+        try {
 
-        clearCart();
+            for (const item of cart) {
 
-        alert("¡Gracias por tu compra!");
+                const consulta = query(
+                    collection(db, "productos"),
+                    where("id", "==", item.id)
+                );
 
-        navigate("/");
+                const respuesta = await getDocs(consulta);
+
+                if (respuesta.empty) {
+                    alert(`No se encontró el producto ${item.nombre}`);
+                    return;
+                }
+
+                const documento = respuesta.docs[0];
+
+                const datos = documento.data();
+
+                if (datos.stock < item.quantity) {
+
+                    alert(
+                        `No hay suficiente stock de ${item.nombre}.`
+                    );
+
+                    return;
+                }
+
+                await updateDoc(
+
+                    doc(db, "productos", documento.id),
+
+                    {
+
+                        stock: datos.stock - item.quantity
+
+                    }
+
+                );
+
+            }
+
+            clearCart();
+
+            alert("¡Gracias por tu compra!");
+
+            navigate("/");
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            alert("Ocurrió un error al finalizar la compra.");
+
+        }
 
     };
 
@@ -70,9 +130,9 @@ function Cart() {
 
     return (
 
-        <div className="container mt-4">
+        <div className={styles.container}>
 
-            <h2 className="mb-4">Mi carrito</h2>
+            <h2 className={styles.titulo}>Mi carrito</h2>
 
             {
 
@@ -80,7 +140,7 @@ function Cart() {
 
                     <div
                         key={item.cartId}
-                        className="card mb-3"
+                        className={`card mb-3 ${styles.cardProducto}`}
                     >
 
                         <div className="row g-0">
@@ -90,11 +150,7 @@ function Cart() {
                                 <img
                                     src={item.imagen}
                                     alt={item.nombre}
-                                    className="img-fluid rounded p-2"
-                                    style={{
-                                        maxHeight: "180px",
-                                        objectFit: "contain"
-                                    }}
+                                    className={styles.imagen}
                                 />
 
                             </div>
@@ -158,7 +214,7 @@ function Cart() {
 
                                         </button>
 
-                                        <span>
+                                        <span className={styles.cantidad}>
 
                                             {item.quantity}
 
@@ -218,7 +274,7 @@ function Cart() {
 
             <hr />
 
-            <div className="card mt-4">
+            <div className={`card ${styles.cupon}`}>
 
                 <div className="card-body">
 
@@ -250,11 +306,10 @@ function Cart() {
                         mensajeCupon && (
 
                             <div
-                                className={`alert mt-3 ${
-                                    descuento > 0
-                                        ? "alert-success"
-                                        : "alert-danger"
-                                }`}
+                                className={`alert mt-3 ${descuento > 0
+                                    ? "alert-success"
+                                    : "alert-danger"
+                                    }`}
                             >
 
                                 {mensajeCupon}
@@ -269,7 +324,7 @@ function Cart() {
 
             </div>
 
-            <div className="mt-4">
+            <div className={styles.resumen}>
 
                 <h5>
 
@@ -307,7 +362,7 @@ function Cart() {
 
                 <hr />
 
-                <h4>
+                <h4 className={styles.total}>
 
                     Total
 
@@ -321,7 +376,7 @@ function Cart() {
 
             </div>
 
-            <div className="d-flex justify-content-between mt-4">
+            <div className={styles.botones}>
 
                 <button
                     className="btn btn-warning"

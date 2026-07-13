@@ -28,6 +28,7 @@ function App() {
         {/* <Route path="/alta" element={
             <ProtectedRoute rolesPermitidos={['admin']}>
               <Gestion />
+              <GestionCupones />
             </ProtectedRoute>
           }
         />
@@ -38,7 +39,3 @@ function App() {
 }
 
 export default App;
-
-/* descomentar la de Gestion cuando la termine de armar asi ya esta protegida 
-y agregar la de cupones
-*/
