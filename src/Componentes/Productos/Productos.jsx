@@ -1,24 +1,37 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import TarjetaProducto from '../TarjetaProducto/TarjetaProducto';
 
 
-function Productos({ Mensaje }) {
+function Productos({ Mensaje, soloDestacados = false }) {
 
     const [productos, setProductos] = useState([]);
     const [error, setError] = useState(null);
     const [cargando, setCargando] = useState(true);
-    
+
     useEffect(() => {
 
         const obtenerProductos = async () => {
 
             try {
 
-                const productosRef = collection(db, "productos");
+                let consulta;
 
-                const respuesta = await getDocs(productosRef);
+                if (soloDestacados) {
+
+                    consulta = query(
+                        collection(db, "productos"),
+                        where("destacado", "==", true)
+                    );
+
+                } else {
+
+                    consulta = collection(db, "productos");
+
+                }
+
+                const respuesta = await getDocs(consulta);
 
                 const listaProductos = respuesta.docs.map((doc) => ({
                     id: doc.id,
@@ -41,7 +54,7 @@ function Productos({ Mensaje }) {
 
         obtenerProductos();
 
-    }, []);
+    }, [soloDestacados]);
 
     if (cargando) {
         return <h2>Cargando productos...</h2>;
@@ -49,6 +62,10 @@ function Productos({ Mensaje }) {
 
     if (error) {
         return <h2>Error: {error}</h2>;
+    }
+
+    if (productos.length === 0) {
+        return <h2>No hay productos para mostrar.</h2>;
     }
 
     return (
@@ -73,6 +90,7 @@ function Productos({ Mensaje }) {
         </div>
 
     );
+
 }
 
 export default Productos;

@@ -16,7 +16,10 @@ function App() {
 
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<h1>Página de Inicio</h1>} />
+        <Route path="/" element={ <Productos
+            Mensaje="Productos destacados"
+            soloDestacados={true}
+        />} />
         {/* <Route path="/productos" element={<ItemListContainer Mensaje={"Productos destacados"}/>} /> */}
         <Route path="/Productos" element={<Productos Mensaje="Todos los productos" />} />
         <Route path='/Carrito' element={<Cart />} />
