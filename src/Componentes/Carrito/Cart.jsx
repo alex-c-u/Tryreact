@@ -1,25 +1,65 @@
-import React from 'react';
+import React, { useState } from "react";
 import { useCart } from '../../context/CartContext/CartContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 function Cart() {
 
+    const navigate = useNavigate();
+
+    const [codigoCupon, setCodigoCupon] = useState("");
+    const [mensajeCupon, setMensajeCupon] = useState("");
+
     const {
+
+        aplicarCupon,
+        descuento,
+        getCartTotal,
+        getTotalConDescuento,
         cart,
         updateQuantity,
         removeFromCart,
         clearCart,
-        getCartTotal
+
     } = useCart();
+
+
+    const aplicarCodigo = async () => {
+
+        const respuesta = await aplicarCupon(codigoCupon);
+
+        setMensajeCupon(respuesta.mensaje);
+
+    };
+
+
+    const finalizarCompra = async () => {
+
+        // Acá después vamos a descontar el stock de Firebase
+
+        clearCart();
+
+        alert("¡Gracias por tu compra!");
+
+        navigate("/");
+
+    };
+
 
     if (cart.length === 0) {
 
         return (
 
-            <div className="container mt-5">
+            <div className="container mt-5 text-center">
 
                 <h2>Tu carrito está vacío.</h2>
+
+                <Link
+                    to="/productos"
+                    className="btn btn-primary mt-3"
+                >
+                    ¡Empeza a comprar!
+                </Link>
 
             </div>
 
@@ -27,22 +67,20 @@ function Cart() {
 
     }
 
+
     return (
 
         <div className="container mt-4">
 
-            <h2>Mi carrito</h2>
+            <h2 className="mb-4">Mi carrito</h2>
 
             {
 
                 cart.map(item => (
 
                     <div
-
                         key={item.cartId}
-
                         className="card mb-3"
-
                     >
 
                         <div className="row g-0">
@@ -50,21 +88,13 @@ function Cart() {
                             <div className="col-md-3 text-center">
 
                                 <img
-
                                     src={item.imagen}
-
                                     alt={item.nombre}
-
                                     className="img-fluid rounded p-2"
-
                                     style={{
-
                                         maxHeight: "180px",
-
                                         objectFit: "contain"
-
                                     }}
-
                                 />
 
                             </div>
@@ -73,11 +103,7 @@ function Cart() {
 
                                 <div className="card-body">
 
-                                    <h4>
-
-                                        {item.nombre}
-
-                                    </h4>
+                                    <h4>{item.nombre}</h4>
 
                                     {
 
@@ -85,13 +111,7 @@ function Cart() {
 
                                             <p>
 
-                                                <strong>
-
-                                                    Variante:
-
-                                                </strong>
-
-                                                {" "}
+                                                <strong>Variante:</strong>{" "}
 
                                                 {item.variante.nombre}
 
@@ -103,22 +123,14 @@ function Cart() {
 
                                     <p>
 
-                                        Precio:
-
-                                        ${item.precio}
+                                        Precio: ${item.precio}
 
                                     </p>
 
-                                    <div
-
-                                        className="d-flex align-items-center gap-3"
-
-                                    >
+                                    <div className="d-flex align-items-center gap-3">
 
                                         <button
-
                                             className="btn btn-danger"
-
                                             onClick={() => {
 
                                                 if (item.quantity === 1) {
@@ -140,7 +152,6 @@ function Cart() {
                                                 }
 
                                             }}
-
                                         >
 
                                             -
@@ -154,27 +165,14 @@ function Cart() {
                                         </span>
 
                                         <button
-
                                             className="btn btn-success"
-
                                             onClick={() =>
-
                                                 updateQuantity(
-
                                                     item.cartId,
-
                                                     item.quantity + 1
-
                                                 )
-
                                             }
-
-                                            disabled={
-
-                                                item.quantity >= item.stock
-
-                                            }
-
+                                            disabled={item.quantity >= item.stock}
                                         >
 
                                             +
@@ -185,36 +183,21 @@ function Cart() {
 
                                     <p className="mt-3">
 
-                                        <strong>
-
-                                            Subtotal:
-
-                                        </strong>
+                                        <strong>Subtotal:</strong>
 
                                         {" "}
 
                                         $
 
-                                        {
-
-                                            item.precio *
-
-                                            item.quantity
-
-                                        }
+                                        {item.precio * item.quantity}
 
                                     </p>
 
                                     <button
-
                                         className="btn btn-outline-danger"
-
                                         onClick={() =>
-
                                             removeFromCart(item.cartId)
-
                                         }
-
                                     >
 
                                         Eliminar
@@ -235,42 +218,130 @@ function Cart() {
 
             <hr />
 
-            <h3>
+            <div className="card mt-4">
 
-                Total:
+                <div className="card-body">
 
-                ${getCartTotal()}
+                    <h5>Cupón de descuento</h5>
 
-            </h3>
+                    <div className="input-group">
 
-            <button
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Ej: BIENVENIDA"
+                            value={codigoCupon}
+                            onChange={(e) => setCodigoCupon(e.target.value)}
+                        />
 
-                className="btn btn-warning"
+                        <button
+                            className="btn btn-primary"
+                            onClick={aplicarCodigo}
+                        >
 
-                onClick={clearCart}
+                            Aplicar
 
-            >
+                        </button>
 
-                Vaciar carrito
+                    </div>
 
-            </button>
-            
-            <button
-                
-                className="btn-finalizar"
+                    {
 
-                onClick={()=>
+                        mensajeCupon && (
+
+                            <div
+                                className={`alert mt-3 ${
+                                    descuento > 0
+                                        ? "alert-success"
+                                        : "alert-danger"
+                                }`}
+                            >
+
+                                {mensajeCupon}
+
+                            </div>
+
+                        )
+
+                    }
+
+                </div>
+
+            </div>
+
+            <div className="mt-4">
+
+                <h5>
+
+                    Subtotal
+
+                    <span className="float-end">
+
+                        ${getCartTotal().toFixed(2)}
+
+                    </span>
+
+                </h5>
+
                 {
-                    clearCart()
-                    alert("Gracias por compra")
+
+                    descuento > 0 && (
+
+                        <h5 className="text-success">
+
+                            Descuento ({descuento}%)
+
+                            <span className="float-end">
+
+                                -$
+
+                                {(getCartTotal() * descuento / 100).toFixed(2)}
+
+                            </span>
+
+                        </h5>
+
+                    )
+
                 }
-                }
 
-            >
+                <hr />
 
-                Finalizar Compra
+                <h4>
 
-            </button>
+                    Total
+
+                    <span className="float-end">
+
+                        ${getTotalConDescuento().toFixed(2)}
+
+                    </span>
+
+                </h4>
+
+            </div>
+
+            <div className="d-flex justify-content-between mt-4">
+
+                <button
+                    className="btn btn-warning"
+                    onClick={clearCart}
+                >
+
+                    Vaciar carrito
+
+                </button>
+
+                <button
+                    className="btn btn-success"
+                    onClick={finalizarCompra}
+                >
+
+                    Finalizar compra
+
+                </button>
+
+            </div>
 
         </div>
 
@@ -279,10 +350,3 @@ function Cart() {
 }
 
 export default Cart;
-
-{/* <Link to="/" onClick={() => {
-                clearCart()
-                alert("Gracias por comprar")
-                }} className="btn-finalizar">
-                Finalizar Compra
-</Link> */}

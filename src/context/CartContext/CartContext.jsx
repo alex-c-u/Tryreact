@@ -1,10 +1,17 @@
 import React, { createContext, useContext, useState } from "react";
+import {
+    collection,
+    query,
+    where,
+    getDocs
+} from "firebase/firestore";
+
+import { db } from "../../firebase/config";
 
 export const CartContext = createContext();
 
 export const useCart = () => {
-
-    const context = useContext(CartContext);
+const context = useContext(CartContext);
 
     if (!context) {
         throw new Error("useCart debe ser usado dentro de un CartProvider");
@@ -17,7 +24,13 @@ export const CartProvider = ({ children }) => {
 
     const [cart, setCart] = useState([]);
 
-    // Agregar un producto
+    const [descuento, setDescuento] = useState(0);
+
+    const [cuponAplicado, setCuponAplicado] = useState(null);
+
+    // ==========================
+    // Agregar producto
+    // ==========================
 
     const addToCart = (producto, quantity = 1) => {
 
@@ -32,12 +45,10 @@ export const CartProvider = ({ children }) => {
                 return prevCart.map(item =>
 
                     item.cartId === producto.cartId
-
                         ? {
                             ...item,
                             quantity: item.quantity + quantity
                         }
-
                         : item
 
                 );
@@ -59,7 +70,9 @@ export const CartProvider = ({ children }) => {
 
     };
 
-    // Cambiar cantidad
+    // ==========================
+    // Actualizar cantidad
+    // ==========================
 
     const updateQuantity = (cartId, quantity) => {
 
@@ -76,12 +89,10 @@ export const CartProvider = ({ children }) => {
             prevCart.map(item =>
 
                 item.cartId === cartId
-
                     ? {
                         ...item,
                         quantity
                     }
-
                     : item
 
             )
@@ -90,7 +101,9 @@ export const CartProvider = ({ children }) => {
 
     };
 
-    // Eliminar un producto
+    // ==========================
+    // Eliminar producto
+    // ==========================
 
     const removeFromCart = (cartId) => {
 
@@ -102,15 +115,23 @@ export const CartProvider = ({ children }) => {
 
     };
 
+    // ==========================
     // Vaciar carrito
+    // ==========================
 
     const clearCart = () => {
 
         setCart([]);
 
+        setDescuento(0);
+
+        setCuponAplicado(null);
+
     };
 
-    // Cantidad total de productos
+    // ==========================
+    // Cantidad total
+    // ==========================
 
     const getCartQuantity = () => {
 
@@ -124,19 +145,85 @@ export const CartProvider = ({ children }) => {
 
     };
 
-    // Precio total
+    // ==========================
+    // Subtotal
+    // ==========================
 
     const getCartTotal = () => {
 
         return cart.reduce(
 
-            (total, item) => total + (item.precio * item.quantity),
+            (acc, item) => acc + item.precio * item.quantity,
 
             0
 
         );
 
     };
+
+    // ==========================
+    // Total con descuento
+    // ==========================
+
+    const getTotalConDescuento = () => {
+
+        const total = getCartTotal();
+
+        return total - (total * descuento) / 100;
+
+    };
+
+    // ==========================
+    // Aplicar cupón
+    // ==========================
+
+    const aplicarCupon = async (codigo) => {
+
+        const consulta = query(
+
+            collection(db, "cupones"),
+
+            where("codigo", "==", codigo.toUpperCase())
+
+        );
+
+        const respuesta = await getDocs(consulta);
+
+        if (respuesta.empty) {
+
+            setDescuento(0);
+
+            setCuponAplicado(null);
+
+            return {
+
+                ok: false,
+
+                mensaje: "Cupón inexistente."
+
+            };
+
+        }
+
+        const cupon = respuesta.docs[0].data();
+
+        setDescuento(cupon.descuento);
+
+        setCuponAplicado(cupon.codigo);
+
+        return {
+
+            ok: true,
+
+            mensaje: `Cupón ${cupon.codigo} aplicado (${cupon.descuento}% de descuento).`
+
+        };
+
+    };
+
+    // ==========================
+    // Provider
+    // ==========================
 
     return (
 
@@ -156,7 +243,15 @@ export const CartProvider = ({ children }) => {
 
                 getCartQuantity,
 
-                getCartTotal
+                getCartTotal,
+
+                getTotalConDescuento,
+
+                descuento,
+
+                cuponAplicado,
+
+                aplicarCupon
 
             }}
 
@@ -169,7 +264,3 @@ export const CartProvider = ({ children }) => {
     );
 
 };
-
-    //asegurarme que ande el removeItem
-    //asegurarme que ande isInCart
-    //ver si me gustan asi o hacerlos de otra forma
