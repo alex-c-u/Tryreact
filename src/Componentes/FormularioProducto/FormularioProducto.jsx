@@ -8,9 +8,7 @@ export function FormularioProducto({
     modoEdicion,
     errores
 }) {
-    //despues puedo borrar este console.log
-    console.log(datosForm);
-
+ 
     const formStyle = {
         display: 'flex',
         flexDirection: 'column',
@@ -21,6 +19,7 @@ export function FormularioProducto({
         borderRadius: '8px',
         gap: '16px'
     };
+    
     return (
         <form style={formStyle} onSubmit={manejarEnvio}>
             <h3>

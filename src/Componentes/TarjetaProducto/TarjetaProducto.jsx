@@ -5,13 +5,12 @@ import styles from "./TarjetaProducto.module.css";
 
 function TarjetaProducto({ id, nombre, precio, imagen, stock, variantes = []
 }) {
-    
+
     const { addToCart, updateQuantity, removeFromCart } = useCart();
 
     const [favorito, setFavorito] = useState(false);
 
     const [cantidad, setCantidad] = useState(0);
-
 
     const [varianteSeleccionada, setVarianteSeleccionada] = useState(
         variantes.length > 0 ? variantes[0] : null
@@ -29,11 +28,10 @@ function TarjetaProducto({ id, nombre, precio, imagen, stock, variantes = []
         setFavorito(!favorito);
     };
 
-
     const cartId = varianteSeleccionada
         ? `${id}-${varianteSeleccionada.id}`
         : id;
-const producto = {
+    const producto = {
         cartId,
         id,
         nombre,
@@ -42,7 +40,6 @@ const producto = {
         variante: varianteSeleccionada || null,
         stock: stockDisponible
     };
-
 
     const agregarProducto = () => {
         if (cantidad >= stockDisponible) return;
@@ -89,8 +86,6 @@ const producto = {
 
             <div className={`card h-100 ${styles.card}`}>
 
-                {/* Imagen */}
-
                 <img
                     src={imagenActual}
                     className={`card-img-top ${styles.cardImg}`}
@@ -104,8 +99,6 @@ const producto = {
                     <h6>  ${precioActual}  </h6>
 
                     <Link to={`/productos/${id}`} > Ver detalle </Link>
-
-                    {/* Variantes */}
 
                     {
                         variantes.length > 0 && (
@@ -237,8 +230,6 @@ const producto = {
                         )
 
                     }
-
-                    {/* Favorito */}
 
                     <div className="text-end mt-3">
 

@@ -18,9 +18,7 @@ function ProductoDetalle() {
 
         const obtenerProducto = async () => {
 
-            try {
-                //  para ver pq no me traia el producto 
-                // console.log("ID de la URL:", id);   
+            try {   
 
                 const queryId = query(
                     collection(db, "productos"),
@@ -28,8 +26,7 @@ function ProductoDetalle() {
                 );
 
                 const respuesta = await getDocs(queryId);
-                //ver que encuentra el await
-                // console.log("Cantidad de documentos:", respuesta.size);
+                
                 if (respuesta.empty) {
 
                     setError("Producto no encontrado");

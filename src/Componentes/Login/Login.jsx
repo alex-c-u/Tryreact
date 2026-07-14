@@ -12,15 +12,14 @@ const Login = () => {
         e.preventDefault();
 
         const auth = getAuth();
-        
+
 
 
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                console.log("Usuario logueado:", user);
                 alert("¡Inicio de sesión exitoso!");
-                navigate('/'); 
+                navigate('/');
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -29,6 +28,7 @@ const Login = () => {
                 alert("Error: " + errorMessage);
             });
     };
+    
     return (
         <div>
             <h2>Iniciar Sesión</h2>

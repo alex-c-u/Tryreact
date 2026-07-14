@@ -122,7 +122,7 @@ const Gestion = () => {
 
         setLoading(true);
         setLoading(true);
-        console.log("Loading...")
+  
 
         
         const apiKey = '08a248e8e0ba55f2b3e8e183d38fb195'; 
@@ -136,8 +136,6 @@ const Gestion = () => {
                 const formData = new FormData();
                 formData.append("image", imagenFile);
 
-                console.log("Subiendo imagen a ImgBB...");
-
                 const respuestaImgbb = await
                     fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
                         method: 'POST',
@@ -148,7 +146,7 @@ const Gestion = () => {
 
 
                 if (datosImgbb.success) {
-                    console.log("Imagen subida con éxito. URL:", datosImgbb.data.url);
+                    //console.log("Imagen subida con éxito. URL:", datosImgbb.data.url);
 
                     urlImagen = datosImgbb.data.url;
 
@@ -168,10 +166,7 @@ const Gestion = () => {
                 destacado: Boolean(false),
                 imagen: urlImagen
             };
-            // Por el momento hacemos un console.log
-            console.log('Enviando producto a Firebase:', productoCompleto);
-
-
+    
             const productosCollection = collection(db, "productos");
 
             if (productoAEditar) {

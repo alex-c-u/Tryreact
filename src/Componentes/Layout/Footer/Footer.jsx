@@ -1,4 +1,3 @@
-import styles from './Footer.module.css'
 import Directorio from '../../Equipo/Directorio';
 
 function Footer(){

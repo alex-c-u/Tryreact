@@ -11,7 +11,7 @@ import { db } from "../../firebase/config";
 export const CartContext = createContext();
 
 export const useCart = () => {
-const context = useContext(CartContext);
+    const context = useContext(CartContext);
 
     if (!context) {
         throw new Error("useCart debe ser usado dentro de un CartProvider");
@@ -27,10 +27,6 @@ export const CartProvider = ({ children }) => {
     const [descuento, setDescuento] = useState(0);
 
     const [cuponAplicado, setCuponAplicado] = useState(null);
-
-    // ==========================
-    // Agregar producto
-    // ==========================
 
     const addToCart = (producto, quantity = 1) => {
 
@@ -70,10 +66,6 @@ export const CartProvider = ({ children }) => {
 
     };
 
-    // ==========================
-    // Actualizar cantidad
-    // ==========================
-
     const updateQuantity = (cartId, quantity) => {
 
         if (quantity <= 0) {
@@ -101,10 +93,6 @@ export const CartProvider = ({ children }) => {
 
     };
 
-    // ==========================
-    // Eliminar producto
-    // ==========================
-
     const removeFromCart = (cartId) => {
 
         setCart(prevCart =>
@@ -115,10 +103,6 @@ export const CartProvider = ({ children }) => {
 
     };
 
-    // ==========================
-    // Vaciar carrito
-    // ==========================
-
     const clearCart = () => {
 
         setCart([]);
@@ -128,10 +112,6 @@ export const CartProvider = ({ children }) => {
         setCuponAplicado(null);
 
     };
-
-    // ==========================
-    // Cantidad total
-    // ==========================
 
     const getCartQuantity = () => {
 
@@ -145,10 +125,6 @@ export const CartProvider = ({ children }) => {
 
     };
 
-    // ==========================
-    // Subtotal
-    // ==========================
-
     const getCartTotal = () => {
 
         return cart.reduce(
@@ -161,10 +137,6 @@ export const CartProvider = ({ children }) => {
 
     };
 
-    // ==========================
-    // Total con descuento
-    // ==========================
-
     const getTotalConDescuento = () => {
 
         const total = getCartTotal();
@@ -172,10 +144,6 @@ export const CartProvider = ({ children }) => {
         return total - (total * descuento) / 100;
 
     };
-
-    // ==========================
-    // Aplicar cupón
-    // ==========================
 
     const aplicarCupon = async (codigo) => {
 
@@ -220,10 +188,6 @@ export const CartProvider = ({ children }) => {
         };
 
     };
-
-    // ==========================
-    // Provider
-    // ==========================
 
     return (
 
